@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore SDG 1 - No Poverty</title>
+<style>
+:root {
+  --red: #e5243b;
+  --red-dark: #b8172a;
+  --ink: #172026;
+  --muted: #61707a;
+  --paper: #fffaf3;
+  --green: #2f8f67;
+  --gold: #d99a25;
+  --blue: #3077a8;
+  --line: rgba(23, 32, 38, .13);
+  --shadow: 0 18px 55px rgba(20, 31, 38, .14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+.topbar {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px clamp(18px, 5vw, 64px);
+  color: #fff;
+  background: rgba(16, 20, 24, .78);
+  backdrop-filter: blur(14px);
+}
+
+.page-progress {
+  position: fixed;
+  z-index: 25;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--green), var(--blue));
+  box-shadow: 0 0 18px rgba(229, 36, 59, .55);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 170px;
+  font-weight: 800;
+}
+
+.mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--red);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nav a {
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: .95rem;
+}
+
+.nav a:hover,
+.nav a.active {
+  background: rgba(255, 255, 255, .14);
+}
+
+.hero {
+  position: relative;
+  min-height: 58vh;
+  display: grid;
+  align-items: end;
+  padding: 110px clamp(20px, 7vw, 94px) 46px;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(8, 13, 18, .24), rgba(8, 13, 18, .88)),
+    url("https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=1800&q=84");
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 30%;
+  background: linear-gradient(180deg, transparent, rgba(255, 250, 243, .98));
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  animation: riseIn .85s ease both;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, .4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .1);
+  font-weight: 700;
+}
+
+h1 {
+  max-width: 820px;
+  margin: 20px 0 18px;
+  font-size: clamp(2.4rem, 6vw, 5.1rem);
+  line-height: .96;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 790px;
+  margin: 0;
+  color: rgba(255, 255, 255, .9);
+  font-size: clamp(1.05rem, 2vw, 1.28rem);
+  line-height: 1.65;
+}
+
+main {
+  background:
+    linear-gradient(90deg, rgba(229, 36, 59, .06) 0 1px, transparent 1px 100%),
+    linear-gradient(0deg, rgba(229, 36, 59, .045) 0 1px, transparent 1px 100%);
+  background-size: 44px 44px;
+}
+
+.explore-shell {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 22px;
+  max-width: 1240px;
+  margin: auto;
+  padding: 70px clamp(20px, 7vw, 94px);
+}
+
+.topic-menu,
+.content-card,
+.mini-card,
+.source-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: var(--shadow);
+}
+
+.topic-menu {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  padding: 18px;
+}
+
+.topic-menu h2 {
+  margin: 0 0 12px;
+  font-size: 1.35rem;
+}
+
+.topic-menu p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.topic-buttons {
+  counter-reset: topic;
+  display: grid;
+  gap: 9px;
+}
+
+.topic-btn {
+  counter-increment: topic;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  font-weight: 800;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.topic-btn::before {
+  content: counter(topic);
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--ink);
+  font-size: .85rem;
+}
+
+.topic-btn:hover {
+  transform: translateX(3px);
+  border-color: rgba(229, 36, 59, .45);
+}
+
+.topic-btn.active {
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+
+.topic-btn.active::before {
+  color: var(--red);
+  background: #fff;
+}
+
+.topic-meter {
+  margin: 16px 0 4px;
+}
+
+.topic-meter-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.topic-meter-track {
+  height: 10px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e6ece8;
+}
+
+.topic-meter-fill {
+  display: block;
+  width: 12.5%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--green), var(--blue));
+  transition: width .25s ease;
+}
+
+.content-card {
+  min-height: 580px;
+  overflow: hidden;
+}
+
+.content-card.switching {
+  animation: cardSwitch .28s ease both;
+}
+
+.topic-hero {
+  min-height: 210px;
+  display: grid;
+  align-items: end;
+  padding: 26px;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 38, .15), rgba(23, 32, 38, .82)),
+    var(--topic-image);
+  background-size: cover;
+  background-position: center;
+}
+
+.topic-hero h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+}
+
+.topic-hero p {
+  max-width: 720px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, .9);
+  line-height: 1.62;
+}
+
+.topic-body {
+  padding: 26px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  min-height: 128px;
+  padding: 18px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  transition: transform .22s ease;
+}
+
+.stat:hover,
+.mini-card:hover,
+.source-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat:nth-child(2) {
+  background: var(--green);
+}
+
+.stat:nth-child(3) {
+  background: var(--blue);
+}
+
+.stat:nth-child(4) {
+  background: var(--gold);
+}
+
+.stat strong {
+  display: block;
+  font-size: clamp(1.8rem, 3.7vw, 3.2rem);
+  line-height: 1;
+}
+
+.stat span {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.42;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.mini-card,
+.source-card {
+  padding: 20px;
+  box-shadow: none;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+
+.mini-card:hover,
+.source-card:hover {
+  border-color: rgba(229, 36, 59, .28);
+  box-shadow: 0 16px 36px rgba(20, 31, 38, .1);
+}
+
+.mini-card h3,
+.source-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+
+.mini-card p,
+.source-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.target-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tag {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.mini-card:nth-child(2) .tag,
+.mini-card:nth-child(5) .tag {
+  background: var(--green);
+}
+
+.mini-card:nth-child(3) .tag,
+.mini-card:nth-child(6) .tag {
+  background: var(--blue);
+}
+
+.source-card a {
+  color: var(--red-dark);
+  font-weight: 800;
+}
+
+.bottom-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.topic-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(229, 36, 59, .22);
+}
+
+.btn.dark {
+  background: var(--ink);
+}
+
+footer {
+  padding: 36px 20px;
+  color: #fff;
+  background: #101418;
+  text-align: center;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardSwitch {
+  from {
+    opacity: .72;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    position: absolute;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .nav {
+    justify-content: flex-start;
+  }
+
+  .explore-shell,
+  .info-grid,
+  .target-grid,
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .topic-menu {
+    position: static;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page-progress" id="pageProgress"></div>
+<nav class="topbar">
+  <div class="brand"><span class="mark">1</span><span>SDG No Poverty</span></div>
+  <div class="nav">
+    <a href="sdg-no-poverty-interactive.html">Home</a>
+    <a class="active" href="sdg-explore.html">Explore</a>
+    <a href="sdg-no-poverty-interactive.html#voices">Voices</a>
+    <a href="sdg-no-poverty-interactive.html#games">Games</a>
+    <a href="sdg-no-poverty-interactive.html#action">Act</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="kicker">Explore SDG 1</span>
+    <h1>Information Center</h1>
+    <p>Choose a topic button to open a focused section. Each topic gives short, clear information that can be used for a presentation, school project, or awareness website.</p>
+  </div>
+</header>
+
+<main>
+  <div class="explore-shell">
+    <aside class="topic-menu">
+      <h2>Explore Options</h2>
+      <p>The full SDG 1 information is separated here, away from the home page.</p>
+      <div class="topic-buttons">
+        <button class="topic-btn active" data-topic="overview">Overview</button>
+        <button class="topic-btn" data-topic="facts">Key Facts</button>
+        <button class="topic-btn" data-topic="poverty">Types Of Poverty</button>
+        <button class="topic-btn" data-topic="causes">Causes</button>
+        <button class="topic-btn" data-topic="targets">SDG 1 Targets</button>
+        <button class="topic-btn" data-topic="solutions">Solutions</button>
+        <button class="topic-btn" data-topic="myths">Myths And Facts</button>
+        <button class="topic-btn" data-topic="sources">Sources</button>
+      </div>
+      <div class="topic-meter">
+        <div class="topic-meter-top">
+          <span id="topicPosition">Topic 1 of 8</span>
+          <span id="topicPercent">12%</span>
+        </div>
+        <div class="topic-meter-track"><span class="topic-meter-fill" id="topicMeterFill"></span></div>
+      </div>
+    </aside>
+
+    <section class="content-card" id="topicContent" aria-live="polite"></section>
+  </div>
+</main>
+
+<footer>
+  <p><b>SDG 1: No Poverty</b> - End poverty in all its forms everywhere.</p>
+</footer>
+
+<script>
+const pageProgress = document.getElementById("pageProgress");
+const topicOrder = ["overview", "facts", "poverty", "causes", "targets", "solutions", "myths", "sources"];
+const topicPosition = document.getElementById("topicPosition");
+const topicPercent = document.getElementById("topicPercent");
+const topicMeterFill = document.getElementById("topicMeterFill");
+
+function updatePageProgress() {
+  const height = document.documentElement.scrollHeight - window.innerHeight;
+  const percent = height > 0 ? (window.scrollY / height) * 100 : 0;
+  pageProgress.style.width = `${percent}%`;
+}
+
+window.addEventListener("scroll", updatePageProgress, { passive: true });
+window.addEventListener("resize", updatePageProgress);
+updatePageProgress();
+
+const topicImages = {
+  overview: 'url("https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1400&q=82")',
+  facts: 'url("https://images.unsplash.com/photo-1483546416237-76fd26bbcdd4?auto=format&fit=crop&w=1400&q=82")',
+  poverty: 'url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1400&q=82")',
+  causes: 'url("https://images.unsplash.com/photo-1516253593875-bd7ba052fbc4?auto=format&fit=crop&w=1400&q=82")',
+  targets: 'url("https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1400&q=82")',
+  solutions: 'url("https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=82")',
+  myths: 'url("https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?auto=format&fit=crop&w=1400&q=82")',
+  sources: 'url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1400&q=82")'
+};
+
+const topics = {
+  overview: {
+    title: "What SDG 1 Means",
+    intro: "SDG 1 aims to end poverty in all its forms everywhere. Poverty is not only about money; it also includes hunger, unsafe housing, poor health, missed education, limited rights, and weak protection during crises.",
+    html: `
+      <div class="info-grid">
+        <article class="mini-card"><h3>Main Idea</h3><p>People need more than income to live with dignity. They need food, safety, healthcare, school, jobs, basic services, legal rights, and support during emergencies.</p></article>
+        <article class="mini-card"><h3>Why It Matters</h3><p>When poverty decreases, children stay in school longer, families become healthier, communities grow stronger, and people can plan for the future.</p></article>
+        <article class="mini-card"><h3>Who Is Most Affected</h3><p>Children, older people, people with disabilities, displaced families, informal workers, rural communities, and people in conflict-affected areas often face higher risk.</p></article>
+        <article class="mini-card"><h3>Big Message</h3><p>Ending poverty requires systems that work together: education, healthcare, social protection, disaster resilience, and decent work.</p></article>
+      </div>`
+  },
+  facts: {
+    title: "Key Facts",
+    intro: "These numbers help show the scale of SDG 1 and why progress needs to become faster and fairer.",
+    html: `
+      <div class="stats">
+        <div class="stat"><strong>808M</strong><span>people estimated to live in extreme poverty in 2025</span></div>
+        <div class="stat"><strong>1 in 10</strong><span>people worldwide affected by extreme poverty</span></div>
+        <div class="stat"><strong>$3/day</strong><span>updated international extreme poverty line in 2021 PPP</span></div>
+        <div class="stat"><strong>2030</strong><span>target year for the Sustainable Development Goals</span></div>
+      </div>
+      <div class="info-grid">
+        <article class="mini-card"><h3>Progress Has Slowed</h3><p>Global poverty reduced sharply after 1990, but progress has slowed because of conflict, debt, climate shocks, COVID-19 impacts, and weak economic growth in vulnerable places.</p></article>
+        <article class="mini-card"><h3>Location Matters</h3><p>Extreme poverty is increasingly concentrated in sub-Saharan Africa and fragile or conflict-affected situations.</p></article>
+      </div>`
+  },
+  poverty: {
+    title: "Types Of Poverty",
+    intro: "Poverty can be measured in different ways because hardship is not the same in every country or household.",
+    html: `
+      <div class="info-grid">
+        <article class="mini-card"><h3>Extreme Poverty</h3><p>Living below the international poverty line. The World Bank updated this line to $3.00 per person per day using 2021 purchasing power parity.</p></article>
+        <article class="mini-card"><h3>Relative Poverty</h3><p>Not being able to afford a basic standard of living compared with other people in the same society.</p></article>
+        <article class="mini-card"><h3>Multidimensional Poverty</h3><p>Facing several disadvantages at once, such as poor health, weak education, unsafe housing, limited water, and lack of electricity.</p></article>
+        <article class="mini-card"><h3>Working Poverty</h3><p>Having a job but still living in poverty because wages are low, hours are unstable, work is unsafe, or social protection is missing.</p></article>
+      </div>`
+  },
+  causes: {
+    title: "Why Poverty Happens",
+    intro: "Poverty usually comes from connected problems. One crisis can push a family into poverty, and weak systems can make it hard to recover.",
+    html: `
+      <div class="info-grid">
+        <article class="mini-card"><h3>Conflict And Fragility</h3><p>Violence can destroy homes, schools, markets, farms, and jobs, forcing people to move and making basic services difficult to reach.</p></article>
+        <article class="mini-card"><h3>Weak Work Opportunities</h3><p>Unemployment, low wages, unsafe work, and informal jobs leave families without stable income or protection.</p></article>
+        <article class="mini-card"><h3>Disasters And Climate Shocks</h3><p>Floods, droughts, heat, storms, and crop failures can wipe out savings and livelihoods, especially for people with fewer resources.</p></article>
+        <article class="mini-card"><h3>Limited Services</h3><p>Poor access to education, healthcare, clean water, sanitation, transport, technology, and finance can keep poverty going across generations.</p></article>
+      </div>`
+  },
+  targets: {
+    title: "Official SDG 1 Targets",
+    intro: "The official target system shows what governments and communities need to improve to reduce poverty.",
+    html: `
+      <div class="target-grid">
+        <article class="mini-card"><span class="tag">1.1</span><h3>End Extreme Poverty</h3><p>Reduce the share of people living below the international poverty line.</p></article>
+        <article class="mini-card"><span class="tag">1.2</span><h3>Reduce National Poverty</h3><p>Cut poverty in all its national definitions, including poverty among children.</p></article>
+        <article class="mini-card"><span class="tag">1.3</span><h3>Social Protection</h3><p>Build systems such as child benefits, unemployment support, pensions, and disability protection.</p></article>
+        <article class="mini-card"><span class="tag">1.4</span><h3>Equal Access</h3><p>Ensure access to basic services, land, property, technology, finance, and economic resources.</p></article>
+        <article class="mini-card"><span class="tag">1.5</span><h3>Resilience</h3><p>Protect vulnerable people from climate events, disasters, economic shocks, and social crises.</p></article>
+        <article class="mini-card"><span class="tag">1.a/b</span><h3>Resources And Policy</h3><p>Increase investment in poverty reduction and create fair policy frameworks.</p></article>
+      </div>`
+  },
+  solutions: {
+    title: "Solutions That Work Together",
+    intro: "No single solution ends poverty. Strong progress happens when support systems connect.",
+    html: `
+      <div class="info-grid">
+        <article class="mini-card"><h3>Education</h3><p>Quality education gives children skills, confidence, and better chances for future work.</p></article>
+        <article class="mini-card"><h3>Healthcare</h3><p>Affordable healthcare prevents illness from becoming a financial crisis for families.</p></article>
+        <article class="mini-card"><h3>Decent Work</h3><p>Stable jobs, fair wages, safe workplaces, and worker protections help families plan beyond daily survival.</p></article>
+        <article class="mini-card"><h3>Social Protection</h3><p>Cash benefits, food support, pensions, disability support, and unemployment assistance help people survive shocks and recover faster.</p></article>
+        <article class="mini-card"><h3>Basic Services</h3><p>Clean water, sanitation, electricity, housing, transport, and internet access improve health and opportunity.</p></article>
+        <article class="mini-card"><h3>Climate Resilience</h3><p>Disaster preparation, safer infrastructure, and climate-smart livelihoods protect vulnerable communities.</p></article>
+      </div>`
+  },
+  myths: {
+    title: "Myths And Facts",
+    intro: "Good information means challenging simple ideas that hide the real causes of poverty.",
+    html: `
+      <div class="info-grid">
+        <article class="mini-card"><h3>Myth: Poverty is only about individual effort.</h3><p>Fact: Effort matters, but access to schools, healthcare, safety, jobs, transport, legal rights, and fair wages shapes real choices.</p></article>
+        <article class="mini-card"><h3>Myth: A job always ends poverty.</h3><p>Fact: Many people experiencing poverty work. Low pay, unstable hours, unsafe work, and missing benefits can keep working families poor.</p></article>
+        <article class="mini-card"><h3>Myth: Poverty looks the same everywhere.</h3><p>Fact: Poverty differs by country, city, age, gender, disability, conflict, climate risk, and access to public services.</p></article>
+        <article class="mini-card"><h3>Myth: Charity alone can solve poverty.</h3><p>Fact: Donations help, but long-term progress needs public services, fair opportunities, social protection, and disaster resilience.</p></article>
+      </div>`
+  },
+  sources: {
+    title: "Source Notes",
+    intro: "The information is written in simple language from official SDG and World Bank poverty material.",
+    html: `
+      <div class="info-grid">
+        <article class="source-card"><h3>UN SDG 1 Progress</h3><p>The United Nations SDG 2025 reporting estimates 808 million people living in extreme poverty in 2025, about 1 in 10 people worldwide.</p><p><a href="https://unstats.un.org/sdgs/report/2025/goal-01/" target="_blank" rel="noreferrer">Open UN SDG 1 report</a></p></article>
+        <article class="source-card"><h3>World Bank Poverty Measurement</h3><p>The World Bank updated the international extreme poverty line in June 2025 to $3.00 per person per day using 2021 purchasing power parity.</p><p><a href="https://www.worldbank.org/ext/en/topic/poverty/measuring-poverty" target="_blank" rel="noreferrer">Open World Bank explanation</a></p></article>
+      </div>`
+  }
+};
+
+const content = document.getElementById("topicContent");
+
+function renderTopic(topicKey) {
+  const topic = topics[topicKey];
+  const index = topicOrder.indexOf(topicKey);
+  const previousTopic = topicOrder[(index - 1 + topicOrder.length) % topicOrder.length];
+  const nextTopic = topicOrder[(index + 1) % topicOrder.length];
+  const progress = Math.round(((index + 1) / topicOrder.length) * 100);
+  topicPosition.textContent = `Topic ${index + 1} of ${topicOrder.length}`;
+  topicPercent.textContent = `${progress}%`;
+  topicMeterFill.style.width = `${progress}%`;
+  content.classList.remove("switching");
+  void content.offsetWidth;
+  content.classList.add("switching");
+  content.style.setProperty("--topic-image", topicImages[topicKey]);
+  content.innerHTML = `
+    <div class="topic-hero">
+      <div>
+        <h2>${topic.title}</h2>
+        <p>${topic.intro}</p>
+      </div>
+    </div>
+    <div class="topic-body">
+      ${topic.html}
+      <div class="bottom-actions">
+        <a class="btn" href="sdg-no-poverty-interactive.html">Back Home</a>
+        <a class="btn dark" href="sdg-no-poverty-interactive.html#games">Play Games</a>
+      </div>
+      <div class="topic-nav">
+        <button class="btn dark" data-jump="${previousTopic}">Previous Topic</button>
+        <button class="btn" data-jump="${nextTopic}">Next Topic</button>
+      </div>
+    </div>`;
+  content.querySelectorAll("[data-jump]").forEach(button => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.jump;
+      history.replaceState(null, "", `#${target}`);
+      setActiveTopic(target);
+    });
+  });
+}
+
+function setActiveTopic(topicKey) {
+  document.querySelectorAll(".topic-btn").forEach(button => {
+    button.classList.toggle("active", button.dataset.topic === topicKey);
+  });
+  renderTopic(topicKey);
+}
+
+document.querySelectorAll(".topic-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    const topic = button.dataset.topic;
+    history.replaceState(null, "", `#${topic}`);
+    setActiveTopic(topic);
+  });
+});
+
+const initialTopic = location.hash.replace("#", "");
+setActiveTopic(topics[initialTopic] ? initialTopic : "overview");
+</script>
+</body>
+</html>
